@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import pkg from 'pg';
-const { Pool } = pkg;
+//import pkg from 'pg';
+//const { Pool } = pkg;
 
 const io = new Server({
   cors: {
@@ -8,12 +8,13 @@ const io = new Server({
   }
 });
 
+/*
 const pool = new Pool({
   user: "postgres",
   password: "postgres",
   host: "localhost",
   database: "mayer-chat"
-});
+});*/
 
 var sockets = [];
 
@@ -24,6 +25,7 @@ io.on('connection', (socket) => {
   socket.on('message', async (msg) => {
     console.log(`${msg.from} : ${msg.content}`);
 
+    /*
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
@@ -34,7 +36,7 @@ io.on('connection', (socket) => {
       throw e;
     } finally {
       client.release();
-    }
+    }*/
 
     sockets.forEach(s => {
       s.emit('message', msg);

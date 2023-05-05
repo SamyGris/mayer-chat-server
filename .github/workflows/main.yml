@@ -42,6 +42,6 @@ jobs:
                         echo "image tag to be release: $TAG"
                         sudo docker login ghcr.io -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
                         sudo docker pull ghcr.io/samygris/mayer-chat-server/mayerchat-server:$TAG
-                        sudo docker stop mayerchat && docker rm mayerchat || echo "Nothing to stop"
-                        sudo docker run -d --name mayerchat -p 4000:4000 ghcr.io/samygris/mayer-chat-server/mayerchat-server:$TAG
+                        sudo docker stop mayerchat-server && docker rm mayerchat-server || echo "Nothing to stop"
+                        sudo docker run -d --name mayerchat-server -p 4000:4000 ghcr.io/samygris/mayer-chat-server/mayerchat-server:$TAG
 
