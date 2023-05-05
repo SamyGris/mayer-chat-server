@@ -1,0 +1,47 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: build and publish frontend docker image
+        run: |
+                docker build -t ghcr.io/samygris/mayer-chat-server/mayerchat-server:${{ github.sha }} .
+                docker login ghcr.io -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+                docker push ghcr.io/samygris/mayer-chat-server/mayerchat-server:${{ github.sha }}
+
+      - name: Deploy on production VM
+        uses: appleboy/ssh-action@v0.1.8
+        env:
+                TAG: ${{ github.sha }}
+        with:
+                host: ${{ secrets.SSH_HOST }}
+                username: ${{ secrets.SSH_USER }}
+                password: ${{ secrets.SSH_KEY }}
+                envs: TAG
+                script: |
+                        echo "image tag to be release: $TAG"
+                        sudo docker login ghcr.io -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+                        sudo docker pull ghcr.io/samygris/mayer-chat-server/mayerchat-server:$TAG
+                        sudo docker stop mayerchat && docker rm mayerchat || echo "Nothing to stop"
+                        sudo docker run -d --name mayerchat -p 4000:4000 ghcr.io/samygris/mayer-chat-server/mayerchat-server:$TAG
+
