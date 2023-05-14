@@ -1,20 +1,11 @@
 import { Server } from "socket.io";
-//import pkg from 'pg';
-//const { Pool } = pkg;
 
 const io = new Server({
   cors: {
-    origin: "*"
+    origin: "*",
+    methods: ["GET", "POST"],
   }
 });
-
-/*
-const pool = new Pool({
-  user: "postgres",
-  password: "postgres",
-  host: "localhost",
-  database: "mayer-chat"
-});*/
 
 var sockets = [];
 
@@ -24,19 +15,6 @@ io.on('connection', (socket) => {
 
   socket.on('message', async (msg) => {
     console.log(`${msg.from} : ${msg.content}`);
-
-    /*
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      await client.query('INSERT INTO messages (id, from, content) VALUES ($1, $2, $3)', [msg.id, msg.from, msg.content]);
-      await client.query('COMMIT');
-    } catch (e) {
-      await client.query('ROLLBACK');
-      throw e;
-    } finally {
-      client.release();
-    }*/
 
     sockets.forEach(s => {
       s.emit('message', msg);
