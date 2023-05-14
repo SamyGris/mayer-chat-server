@@ -24,6 +24,6 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(4000, () => {
+server.listen(4000, '0.0.0.0', () => {
   console.log('Serveur MayerChat lancé !');
 });
