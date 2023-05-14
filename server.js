@@ -1,6 +1,8 @@
+import { createServer } from 'http';
 import { Server } from "socket.io";
 
-const io = new Server({
+const httpServer = createServer();
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -26,6 +28,6 @@ io.on('connection', (socket) => {
   });
 });
 
-io.listen(4000);
+httpServer.listen(4000);
 
 console.log('Serveur MayerChat lancé !');
