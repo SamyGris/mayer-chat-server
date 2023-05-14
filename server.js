@@ -24,6 +24,6 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(4000, '0.0.0.0', () => {
+server.listen(4000, 'mayerchat.duckdns.org', () => {
   console.log('Serveur MayerChat lancé !');
 });
